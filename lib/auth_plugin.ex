@@ -11,7 +11,7 @@ defmodule AuthPlugin do
       iterations,
       key_length
     )
-    result = String.slice(Base.encode64(elem(res, 1)), 0, 32)
+    result = String.slice(Base.encode64(elem(res, 1)), 0, key_length)
     result == db_pass
   end
 end
