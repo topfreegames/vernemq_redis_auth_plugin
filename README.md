@@ -1,4 +1,4 @@
-# AuthPlugin
+# AuthPlugin [![Build Status](https://travis-ci.org/guilhermef/vernemq_redis_auth.svg?branch=master)](https://travis-ci.org/guilhermef/vernemq_redis_auth)
 
 Vernemq redis auth based on https://github.com/jpmens/mosquitto-auth-plug
 
