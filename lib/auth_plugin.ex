@@ -6,9 +6,15 @@ defmodule AuthPlugin.Supervisor do
   end
 
   def init(:ok) do
-    pool_size = 5
+    host = System.get_env("REDIS_HOST") || "localhost"
+    port = String.to_integer(System.get_env("REDIS_PORT") || "6379")
+    password = System.get_env("REDIS_PASSWORD") || nil
+    pool_size = String.to_integer(System.get_env("REDIS_POOL_SIZE") || "5")
     redix_workers = for i <- 0..(pool_size - 1) do
-      worker(Redix, [[], [name: :"redix_#{i}"]], id: {Redix, i})
+      worker(Redix, [
+        [host: host, port: port, password: password],
+        [name: :"redix_#{i}"]
+      ], id: {Redix, i})
     end
 
     supervise(redix_workers, strategy: :one_for_one)
