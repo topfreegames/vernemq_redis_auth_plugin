@@ -11,11 +11,10 @@ defmodule AuthPluginTest do
   @ok :ok
 
   setup_all do
-    {:ok, auth_plugin} = AuthPlugin.start_link
     AuthPlugin.command(["SET", @user, @encrypted_pass])
     AuthPlugin.command(["SET", @user <> "-" <> @wtopic, 2])
     AuthPlugin.command(["SET", @user <> "-" <> @rtopic, 1])
-    {:ok, auth_plugin: auth_plugin}
+    :ok
   end
 
   test "right password" do

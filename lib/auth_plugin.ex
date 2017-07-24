@@ -1,4 +1,4 @@
-defmodule AuthPlugin do
+defmodule AuthPlugin.Supervisor do
   use Supervisor
 
   def start_link do
@@ -12,6 +12,13 @@ defmodule AuthPlugin do
     end
 
     supervise(redix_workers, strategy: :one_for_one)
+  end
+end
+
+defmodule AuthPlugin do
+  def start(_type, _args) do
+    IO.puts "*** plugin started"
+    AuthPlugin.Supervisor.start_link()
   end
 
   def auth_on_register(_, _, username, password, _) do

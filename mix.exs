@@ -10,20 +10,28 @@ defmodule AuthPlugin.Mixfile do
      deps: deps()]
   end
 
+  defp vmq_plugin_hooks do
+    hooks = [
+      {AuthPlugin, :auth_on_register, 5, []},
+      {AuthPlugin, :auth_on_subscribe, 3, []},
+      {AuthPlugin, :auth_on_publish, 6, []},
+    ]
+    {:vmq_plugin_hooks, hooks}
+  end
+
   def application do
-    [applications: [:logger],
-     env: [
-       vmq_plugin_hooks:
-       [{:auth_on_register, AuthPlugin, :auth_on_register,5,[]},
-        {:auth_on_publish, AuthPlugin, :auth_on_publish,6,[]},
-        {:auth_on_subscribe, AuthPlugin, :auth_on_subscribe,3,[]},],
-       ]]
+    [
+      mod: {AuthPlugin, []},
+      extra_applications: [:logger, :redix, :pbkdf2],
+      env: [vmq_plugin_hooks()]
+    ]
   end
 
   defp deps do
     [
       {:pbkdf2, "~> 2.0"},
-      {:redix, ">= 0.0.0"}
+      {:redix, ">= 0.0.0"},
+      {:distillery, "~> 1.4", runtime: false},
     ]
   end
 end
