@@ -14,23 +14,43 @@ defmodule AuthPlugin do
     supervise(redix_workers, strategy: :one_for_one)
   end
 
+  def auth_on_register(_, _, username, password, _) do
+    validate_user(username, password)
+  end
+
+  def auth_on_publish(username, _, _, topic, _, _) do
+    can_publish_topic(username, topic)
+  end
+
+  def auth_on_subscribe(username, _, [{topic, _}|_] = _topics) do
+    can_subscribe_topic(username, topic)
+  end
+
   def validate_user(user, password) do
     db_string = get_user(user)
-    if db_string != nil do
-      test_password(db_string, password)
+    if db_string != nil and test_password(db_string, password) do
+      :ok
     else
-      false
+      {:error, :invalid_credentials}
     end
   end
 
   def can_publish_topic(user, topic) do
     topic = get_topic(user, topic)
-    topic > 1
+    if topic > 1 do
+      :ok
+    else
+      :error
+    end
   end
 
   def can_subscribe_topic(user, topic) do
     topic = get_topic(user, topic)
-    topic > 0
+    if topic > 0 do
+      :ok
+    else
+      :error
+    end
   end
 
 
