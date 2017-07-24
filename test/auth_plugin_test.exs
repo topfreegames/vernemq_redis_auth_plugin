@@ -5,7 +5,9 @@ defmodule AuthPluginTest do
   @user "such_user"
   @pass "much_password"
   @wtopic "much/chat/write"
+  @wtopic_param [<<"much">>, <<"chat">>, <<"write">>]
   @rtopic "much/chat/read"
+  @rtopic_param [<<"much">>, <<"chat">>, <<"read">>]
   @encrypted_pass "PBKDF2$sha256$901$jpZlWoGyBrmwDn5L$IY5sZpV8y8az/s/81OeQ2511Um8rKtko"
   @invalid_credentials {:error, :invalid_credentials}
   @ok :ok
@@ -32,20 +34,20 @@ defmodule AuthPluginTest do
 
   test "when user can publish topic" do
     assert AuthPlugin.can_publish_topic(@user, @wtopic) == @ok
-    assert AuthPlugin.auth_on_publish(@user, nil, nil, @wtopic, nil, nil) == @ok
+    assert AuthPlugin.auth_on_publish(@user, nil, nil, @wtopic_param, nil, nil) == @ok
   end
 
   test "when user can subscribe topic" do
     assert AuthPlugin.can_subscribe_topic(@user, @wtopic) == @ok
     assert AuthPlugin.can_subscribe_topic(@user, @rtopic) == @ok
-    assert AuthPlugin.auth_on_subscribe(@user, nil, [{@wtopic, nil}]) == @ok
-    assert AuthPlugin.auth_on_subscribe(@user, nil, [{@rtopic, nil}]) == @ok
+    assert AuthPlugin.auth_on_subscribe(@user, nil, [{@wtopic_param, nil}]) == @ok
+    assert AuthPlugin.auth_on_subscribe(@user, nil, [{@rtopic_param, nil}]) == @ok
   end
 
   test "when user cannot subscribe or publish topic" do
     assert AuthPlugin.can_subscribe_topic(@user, "such-topic") == :error
     assert AuthPlugin.can_publish_topic(@user, "such-topic") == :error
-    assert AuthPlugin.auth_on_subscribe(@user, nil, [{"such-topic", nil}]) == :error
-    assert AuthPlugin.auth_on_publish(@user, nil, nil, "such-topic", nil, nil) == :error
+    assert AuthPlugin.auth_on_subscribe(@user, nil, [{[<<"such-topic">>], nil}]) == :error
+    assert AuthPlugin.auth_on_publish(@user, nil, nil, [<<"such-topic">>], nil, nil) == :error
   end
 end

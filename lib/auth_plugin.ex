@@ -32,11 +32,11 @@ defmodule AuthPlugin do
   end
 
   def auth_on_publish(username, _, _, topic, _, _) do
-    can_publish_topic(username, topic)
+    can_publish_topic(username, Enum.join(topic, "/"))
   end
 
   def auth_on_subscribe(username, _, [{topic, _}|_] = _topics) do
-    can_subscribe_topic(username, topic)
+    can_subscribe_topic(username, Enum.join(topic, "/"))
   end
 
   def validate_user(user, password) do
