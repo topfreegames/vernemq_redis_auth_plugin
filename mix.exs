@@ -10,15 +10,20 @@ defmodule AuthPlugin.Mixfile do
      deps: deps()]
   end
 
-  # Configuration for the OTP application
-  #
-  # Type "mix help compile.app" for more information
   def application do
-    # Specify extra applications you'll use from Erlang/Elixir
-    [extra_applications: [:logger]]
+    [applications: [:logger],
+     env: [
+       vmq_plugin_hooks:
+       [{:auth_on_register, AuthPlugin, :auth_on_register,5,[]},
+        {:auth_on_publish, AuthPlugin, :auth_on_publish,6,[]},
+        {:auth_on_subscribe, AuthPlugin, :auth_on_subscribe,3,[]},],
+       ]]
   end
 
   defp deps do
-    [{:pbkdf2, "~> 2.0"}]
+    [
+      {:pbkdf2, "~> 2.0"},
+      {:redix, ">= 0.0.0"}
+    ]
   end
 end
