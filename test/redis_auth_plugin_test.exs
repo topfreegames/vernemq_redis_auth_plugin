@@ -1,6 +1,5 @@
 defmodule RedisAuthPluginTest do
   use ExUnit.Case
-  doctest RedisAuthPlugin
 
   @user "such_user"
   @admin_user "admin_much_user"
@@ -13,7 +12,7 @@ defmodule RedisAuthPluginTest do
   @wtopic_param [<<"much">>, <<"chat">>, <<"write">>]
   @rtopic "much/chat/read"
   @rtopic_param [<<"much">>, <<"chat">>, <<"read">>]
-  @encrypted_pass "PBKDF2$sha256$10000$jpZlWoGyBrmwDn5L$6pWNPCAxYr3IrqxuuqKalDGr344daLfv"
+  @encrypted_pass "PBKDF2$sha256$1000$jpZlWoGyBrmwDn5L$tBZHHs52NErO9tz5exw1QiJ03f5b/bfq"
   @invalid_credentials {:error, :invalid_credentials}
   @ok :ok
 
@@ -45,6 +44,13 @@ defmodule RedisAuthPluginTest do
 
     assert RedisAuthPlugin.can_publish_topic(@admin_user, @wtopic) == @ok
     assert RedisAuthPlugin.auth_on_publish(@admin_user, nil, nil, @wtopic_param, nil, nil) == @ok
+  end
+
+  test "when admin user can publish or subscribe to wildcard topic" do
+    assert RedisAuthPlugin.can_subscribe_topic(@user, "#") == :error
+    assert RedisAuthPlugin.can_publish_topic(@user, "#") == :error
+    assert RedisAuthPlugin.auth_on_subscribe(@user, nil, [{[<<"#">>], nil}]) == :error
+    assert RedisAuthPlugin.auth_on_publish(@user, nil, nil, [<<"#">>], nil, nil) == :error
   end
 
   test "when user can publish to wildcard topic" do
