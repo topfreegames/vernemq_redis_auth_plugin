@@ -38,8 +38,8 @@ end
 # when running `mix release`, the first release in the file
 # will be used by default
 
-release :auth_plugin do
-  set version: current_version(:auth_plugin)
+release :redis_auth_plugin do
+  set version: current_version(:redis_auth_plugin)
   set applications: [
     :runtime_tools
   ]
