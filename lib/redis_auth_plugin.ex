@@ -1,4 +1,4 @@
-defmodule AuthPlugin.Supervisor do
+defmodule RedisAuthPlugin.Supervisor do
   use Supervisor
 
   def start_link do
@@ -6,10 +6,10 @@ defmodule AuthPlugin.Supervisor do
   end
 
   def init(:ok) do
-    host = System.get_env("REDIS_HOST") || "localhost"
-    port = String.to_integer(System.get_env("REDIS_PORT") || "6379")
-    password = System.get_env("REDIS_PASSWORD") || nil
-    pool_size = String.to_integer(System.get_env("REDIS_POOL_SIZE") || "5")
+    host = System.get_env("REDIS_AUTH_REDIS_HOST") || "localhost"
+    port = String.to_integer(System.get_env("REDIS_AUTH_REDIS_PORT") || "6379")
+    password = System.get_env("REDIS_AUTH_REDIS_PASSWORD") || nil
+    pool_size = String.to_integer(System.get_env("REDIS_AUTH_REDIS_POOL_SIZE") || "5")
     redix_workers = for i <- 0..(pool_size - 1) do
       worker(Redix, [
         [host: host, port: port, password: password],
@@ -21,10 +21,10 @@ defmodule AuthPlugin.Supervisor do
   end
 end
 
-defmodule AuthPlugin do
+defmodule RedisAuthPlugin do
   def start(_type, _args) do
     IO.puts "*** plugin started"
-    AuthPlugin.Supervisor.start_link()
+    RedisAuthPlugin.Supervisor.start_link()
   end
 
   def auth_on_register(_, _, username, password, _) do

@@ -1,4 +1,4 @@
-# AuthPlugin [![Build Status](https://travis-ci.org/guilhermef/vernemq_redis_auth.svg?branch=master)](https://travis-ci.org/guilhermef/vernemq_redis_auth)
+# RedisAuthPlugin [![Build Status](https://travis-ci.org/topfreegames/vernemq_redis_auth_plugin.svg?branch=master)](https://travis-ci.org/topfreegames/vernemq_redis_auth_plugin)
 
 Vernemq redis auth based on https://github.com/jpmens/mosquitto-auth-plug
 
@@ -9,7 +9,7 @@ by adding `auth_plugin` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
-  [{:auth_plugin, "~> 0.1.0"}]
+  [{:redis_auth_plugin, "~> 0.1.0"}]
 end
 ```
 

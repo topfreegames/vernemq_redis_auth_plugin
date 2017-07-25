@@ -1,8 +1,8 @@
-defmodule AuthPlugin.Mixfile do
+defmodule RedisAuthPlugin.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :auth_plugin,
+    [app: :redis_auth_plugin,
      version: "0.1.0",
      elixir: "~> 1.4",
      build_embedded: Mix.env == :prod,
@@ -12,16 +12,16 @@ defmodule AuthPlugin.Mixfile do
 
   defp vmq_plugin_hooks do
     hooks = [
-      {AuthPlugin, :auth_on_register, 5, []},
-      {AuthPlugin, :auth_on_subscribe, 3, []},
-      {AuthPlugin, :auth_on_publish, 6, []},
+      {RedisAuthPlugin, :auth_on_register, 5, []},
+      {RedisAuthPlugin, :auth_on_subscribe, 3, []},
+      {RedisAuthPlugin, :auth_on_publish, 6, []},
     ]
     {:vmq_plugin_hooks, hooks}
   end
 
   def application do
     [
-      mod: {AuthPlugin, []},
+      mod: {RedisAuthPlugin, []},
       extra_applications: [:logger, :redix, :pbkdf2],
       env: [vmq_plugin_hooks()]
     ]
