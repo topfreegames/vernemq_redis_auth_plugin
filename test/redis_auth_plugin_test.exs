@@ -6,6 +6,10 @@ defmodule RedisAuthPluginTest do
   @pass "much_password"
   @wtopic "much/chat/write"
   @wtopic_param [<<"much">>, <<"chat">>, <<"write">>]
+  @wtopic_wildcard "much/wildcard/+"
+  @wtopic_wildcard_string "much/wildcard/chat"
+  @wtopic_wildcard_param [<<"much">>, <<"wildcard">>, <<"chat">>]
+  @wtopic_param [<<"much">>, <<"chat">>, <<"write">>]
   @rtopic "much/chat/read"
   @rtopic_param [<<"much">>, <<"chat">>, <<"read">>]
   @encrypted_pass "PBKDF2$sha256$901$jpZlWoGyBrmwDn5L$IY5sZpV8y8az/s/81OeQ2511Um8rKtko"
@@ -15,6 +19,7 @@ defmodule RedisAuthPluginTest do
   setup_all do
     RedisAuthPlugin.command(["SET", @user, @encrypted_pass])
     RedisAuthPlugin.command(["SET", @user <> "-" <> @wtopic, 2])
+    RedisAuthPlugin.command(["SET", @user <> "-" <> @wtopic_wildcard, 2])
     RedisAuthPlugin.command(["SET", @user <> "-" <> @rtopic, 1])
     :ok
   end
@@ -35,6 +40,11 @@ defmodule RedisAuthPluginTest do
   test "when user can publish topic" do
     assert RedisAuthPlugin.can_publish_topic(@user, @wtopic) == @ok
     assert RedisAuthPlugin.auth_on_publish(@user, nil, nil, @wtopic_param, nil, nil) == @ok
+  end
+
+  test "when user can publish to wildcard topic" do
+    assert RedisAuthPlugin.can_publish_topic(@user, @wtopic_wildcard_string) == @ok
+    assert RedisAuthPlugin.auth_on_publish(@user, nil, nil, @wtopic_wildcard_param, nil, nil) == @ok
   end
 
   test "when user can subscribe topic" do

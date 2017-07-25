@@ -22,6 +22,8 @@ defmodule RedisAuthPlugin.Supervisor do
 end
 
 defmodule RedisAuthPlugin do
+  @wildcard_regex ~r/\/([^\/]+)$/
+
   def start(_type, _args) do
     IO.puts "*** plugin started"
     RedisAuthPlugin.Supervisor.start_link()
@@ -88,8 +90,14 @@ defmodule RedisAuthPlugin do
     result == db_pass
   end
 
+  defp get_topic_param(user, topic) do
+    user <> "-" <> topic
+  end
+
   defp get_topic(user, topic) do
-    response = command(["get", user <> "-" <> topic])
+    topic_wildcard =  Regex.replace(@wildcard_regex, topic, "/+")
+    redis_response = command(["mget", get_topic_param(user, topic), get_topic_param(user, topic_wildcard)])
+    response = Enum.at(redis_response, 0) || Enum.at(redis_response, 1)
     if response != nil do
       String.to_integer(response)
     else
