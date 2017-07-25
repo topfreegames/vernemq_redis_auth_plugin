@@ -51,23 +51,12 @@ defmodule RedisAuthPlugin do
   end
 
   def can_publish_topic(user, topic) do
-    topic = get_topic(user, topic)
-    if topic > 1 do
-      :ok
-    else
-      :error
-    end
+    has_permission_on_topic?(user, topic, 1)
   end
 
   def can_subscribe_topic(user, topic) do
-    topic = get_topic(user, topic)
-    if topic > 0 do
-      :ok
-    else
-      :error
-    end
+    has_permission_on_topic?(user, topic, 0)
   end
-
 
   def command(command) do
     {:ok, result} = Redix.command(:"redix_#{random_index()}", command)
@@ -88,6 +77,19 @@ defmodule RedisAuthPlugin do
     )
     result = String.slice(Base.encode64(res), 0, key_length)
     result == db_pass
+  end
+
+  defp has_permission_on_topic?(user, topic, permission_number) do
+    topic = get_topic(user, topic)
+    if topic > permission_number or is_admin?(user) do
+      :ok
+    else
+      :error
+    end
+  end
+
+  defp is_admin?(user) do
+    String.starts_with?(user, "admin_")
   end
 
   defp get_topic_param(user, topic) do
