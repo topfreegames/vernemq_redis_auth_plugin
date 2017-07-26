@@ -14,6 +14,7 @@ defmodule RedisAuthPluginTest do
   @rtopic_param [<<"much">>, <<"chat">>, <<"read">>]
   @encrypted_pass "PBKDF2$sha256$1000$jpZlWoGyBrmwDn5L$tBZHHs52NErO9tz5exw1QiJ03f5b/bfq"
   @invalid_credentials {:error, :invalid_credentials}
+  @invalid_topic {:error, :invalid_topic}
   @ok :ok
 
   setup_all do
@@ -47,10 +48,10 @@ defmodule RedisAuthPluginTest do
   end
 
   test "when admin user can publish or subscribe to wildcard topic" do
-    assert RedisAuthPlugin.can_subscribe_topic(@user, "#") == :error
-    assert RedisAuthPlugin.can_publish_topic(@user, "#") == :error
-    assert RedisAuthPlugin.auth_on_subscribe(@user, nil, [{[<<"#">>], nil}]) == :error
-    assert RedisAuthPlugin.auth_on_publish(@user, nil, nil, [<<"#">>], nil, nil) == :error
+    assert RedisAuthPlugin.can_subscribe_topic(@user, "#") == @invalid_topic
+    assert RedisAuthPlugin.can_publish_topic(@user, "#") == @invalid_topic
+    assert RedisAuthPlugin.auth_on_subscribe(@user, nil, [{[<<"#">>], nil}]) == @invalid_topic
+    assert RedisAuthPlugin.auth_on_publish(@user, nil, nil, [<<"#">>], nil, nil) == @invalid_topic
   end
 
   test "when user can publish to wildcard topic" do
@@ -74,9 +75,9 @@ defmodule RedisAuthPluginTest do
   end
 
   test "when user cannot subscribe or publish topic" do
-    assert RedisAuthPlugin.can_subscribe_topic(@user, "such-topic") == :error
-    assert RedisAuthPlugin.can_publish_topic(@user, "such-topic") == :error
-    assert RedisAuthPlugin.auth_on_subscribe(@user, nil, [{[<<"such-topic">>], nil}]) == :error
-    assert RedisAuthPlugin.auth_on_publish(@user, nil, nil, [<<"such-topic">>], nil, nil) == :error
+    assert RedisAuthPlugin.can_subscribe_topic(@user, "such-topic") == @invalid_topic
+    assert RedisAuthPlugin.can_publish_topic(@user, "such-topic") == @invalid_topic
+    assert RedisAuthPlugin.auth_on_subscribe(@user, nil, [{[<<"such-topic">>], nil}]) == @invalid_topic
+    assert RedisAuthPlugin.auth_on_publish(@user, nil, nil, [<<"such-topic">>], nil, nil) == @invalid_topic
   end
 end

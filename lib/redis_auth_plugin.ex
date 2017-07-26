@@ -84,7 +84,7 @@ defmodule RedisAuthPlugin do
     if topic > permission_number or is_admin?(user) do
       :ok
     else
-      :error
+      {:error, :invalid_topic}
     end
   end
 
